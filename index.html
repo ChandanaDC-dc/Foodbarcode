@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AgroLink - Smart Farming</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f4f4f4;
+    }
+
+    header {
+      background-color: #2d6a4f;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    header select {
+      margin-left: 1rem;
+      padding: 0.3rem;
+      font-size: 1rem;
+    }
+
+    main {
+      padding: 2rem;
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      margin-top: 0;
+    }
+
+    form label {
+      display: block;
+      margin: 1rem 0 0.3rem;
+    }
+
+    form input, form select, form button {
+      width: 100%;
+      padding: 0.5rem;
+      margin-bottom: 1rem;
+      font-size: 1rem;
+    }
+
+    form button {
+      background-color: #40916c;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    form button:hover {
+      background-color: #2d6a4f;
+    }
+
+    #result {
+      margin-top: 1rem;
+      font-weight: bold;
+      color: #1b4332;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🌾 AgroLink</h1>
+    <select id="languageSelect" aria-label="Select Language">
+      <option value="en" selected>English</option>
+      <option value="hi">हिंदी</option>
+      <option value="kn">ಕನ್ನಡ</option>
+      <option value="ta">தமிழ்</option>
+    </select>
+  </header>
+
+  <main>
+    <section class="form-section">
+      <h2 id="title">AI Crop Suggestion</h2>
+      <form id="cropForm">
+        <label for="soil" id="labelSoil">Soil Type:</label>
+        <input type="text" id="soil" name="soil" placeholder="e.g., Loamy" required />
+
+        <label for="region" id="labelRegion">Region:</label>
+        <input type="text" id="region" name="region" placeholder="e.g., Karnataka" required />
+
+        <label for="season" id="labelSeason">Current Season:</label>
+        <select id="season" name="season" required>
+          <option value="summer" id="optionSummer">Summer</option>
+          <option value="monsoon" id="optionMonsoon">Monsoon</option>
+          <option value="winter" id="optionWinter">Winter</option>
+        </select>
+
+        <button type="submit" id="submitBtn">Suggest Crop</button>
+      </form>
+      <div id="result"></div>
+    </section>
+  </main>
+
+  <script>
+    const languageData = {
+      en: {
+        title: "AI Crop Suggestion",
+        labelSoil: "Soil Type:",
+        soilPlaceholder: "e.g., Loamy",
+        labelRegion: "Region:",
+        regionPlaceholder: "e.g., Karnataka",
+        labelSeason: "Current Season:",
+        optionSummer: "Summer",
+        optionMonsoon: "Monsoon",
+        optionWinter: "Winter",
+        submitBtn: "Suggest Crop",
+        suggestions: {
+          default: "Please provide more specific details.",
+          loamyMonsoon: "🌱 Recommended Crop: Rice or Maize",
+          sandySummer: "🌱 Recommended Crop: Groundnut or Watermelon",
+          clayWinter: "🌱 Recommended Crop: Wheat or Mustard"
+        }
+      },
+      hi: {
+        title: "एआई फसल सुझाव",
+        labelSoil: "मिट्टी का प्रकार:",
+        soilPlaceholder: "जैसे, दोमट",
+        labelRegion: "क्षेत्र:",
+        regionPlaceholder: "जैसे, कर्नाटक",
+        labelSeason: "वर्तमान मौसम:",
+        optionSummer: "गर्मी",
+        optionMonsoon: "मानसून",
+        optionWinter: "सर्दी",
+        submitBtn: "फसल सुझाएँ",
+        suggestions: {
+          default: "कृपया अधिक विशिष्ट विवरण प्रदान करें।",
+          loamyMonsoon: "🌱 सुझाई गई फसल: धान या मक्का",
+          sandySummer: "🌱 सुझाई गई फसल: मूंगफली या तरबूज",
+          clayWinter: "🌱 सुझाई गई फसल: गेहूं या सरसों"
+        }
+      },
+      kn: {
+        title: "ಎಐ ಬೆಳೆ ಸೂಚನೆ",
+        labelSoil: "ಮಣ್ಣು ಪ್ರಕಾರ:",
+        soilPlaceholder: "ಉದಾ: ಲೋಮಿ",
+        labelRegion: "ಪ್ರದೇಶ:",
+        regionPlaceholder: "ಉದಾ: ಕರ್ನಾಟಕ",
+        labelSeason: "ಪ್ರಸ್ತುತ ಹವಾಮಾನ:",
+        optionSummer: "ಬೆಳೆಯುವ ಕಾಲ",
+        optionMonsoon: "ಮಾನ್ಸೂನ್",
+        optionWinter: "ಚಳಿ",
+        submitBtn: "ಬೆಳೆ ಸೂಚಿಸಿ",
+        suggestions: {
+          default: "ದಯವಿಟ್ಟು ಹೆಚ್ಚಿನ ವಿವರಗಳನ್ನು ನೀಡಿ.",
+          loamyMonsoon: "🌱 ಶಿಫಾರಸು ಮಾಡಿದ ಬೆಳೆ: ಅಕ್ಕಿ ಅಥವಾ ಜೋಳ",
+          sandySummer: "🌱 ಶಿಫಾರಸು ಮಾಡಿದ ಬೆಳೆ: ಶುಂಠಿ ಅಥವಾ ತಳೆಗೆರ",
+          clayWinter: "🌱 ಶಿಫಾರಸು ಮಾಡಿದ ಬೆಳೆ: ಗೋಧಿ ಅಥವಾ ಅರಿಶಿಣ"
+        }
+      },
+      ta: {
+        title: "ஏஐ பயிர் பரிந்துரை",
+        labelSoil: "மண் வகை:",
+        soilPlaceholder: "உதா: லோமி",
+        labelRegion: "மண்டலம்:",
+        regionPlaceholder: "உதா: கர்நாடகா",
+        labelSeason: "தற்போதைய பருவம்:",
+        optionSummer: "கோடை",
+        optionMonsoon: "மழைக்காலம்",
+        optionWinter: "குளிர்காலம்",
+        submitBtn: "பயிர் பரிந்துரை செய்",
+        suggestions: {
+          default: "தயவுசெய்து மேலும் குறிப்பிட்ட தகவல்களை அளிக்கவும்.",
+          loamyMonsoon: "🌱 பரிந்துரைக்கப்பட்ட பயிர்: அரிசி அல்லது மக்காச்சோளம்",
+          sandySummer: "🌱 பரிந்துரைக்கப்பட்ட பயிர்: நிலக்கடலை அல்லது தர்பூசணி",
+          clayWinter: "🌱 பரிந்துரைக்கப்பட்ட பயிர்: கோதுமை அல்லது கடலை"
+        }
+      }
+    };
+
+    const languageSelect = document.getElementById("languageSelect");
+    const title = document.getElementById("title");
+    const labelSoil = document.getElementById("labelSoil");
+    const soilInput = document.getElementById("soil");
+    const labelRegion = document.getElementById("labelRegion");
+    const regionInput = document.getElementById("region");
+    const labelSeason = document.getElementById("labelSeason");
+    const optionSummer = document.getElementById("optionSummer");
+    const optionMonsoon = document.getElementById("optionMonsoon");
+    const optionWinter = document.getElementById("optionWinter");
+    const submitBtn = document.getElementById("submitBtn");
+    const resultDiv = document.getElementById("result");
+
+    function updateLanguage(lang) {
+      const data = languageData[lang];
+      title.innerText = data.title;
+      labelSoil.innerText = data.labelSoil;
+      soilInput.placeholder = data.soilPlaceholder;
+      labelRegion.innerText = data.labelRegion;
+      regionInput.placeholder = data.regionPlaceholder;
+      labelSeason.innerText = data.labelSeason;
+      optionSummer.innerText = data.optionSummer;
+      optionMonsoon.innerText = data.optionMonsoon;
+      optionWinter.innerText = data.optionWinter;
+      submitBtn.innerText = data.submitBtn;
+      resultDiv.innerText = "";
+    }
+
+    languageSelect.addEventListener("change", () => {
+      updateLanguage(languageSelect.value);
+    });
+
+    document.getElementById("cropForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const lang = languageSelect.value;
+      const data = languageData[lang];
+      
+      const soil = soilInput.value.toLowerCase();
+      const season = document.getElementById("season").value;
+
+      let suggestion = data.suggestions.default;
+
+      if (soil.includes("loamy") && season === "monsoon") {
+        suggestion = data.suggestions.loamyMonsoon;
+      } else if (soil.includes("sandy") && season === "summer") {
+        suggestion = data.suggestions.sandySummer;
+      } else if (soil.includes("clay") && season === "winter") {
+        suggestion = data.suggestions.clayWinter;
+      }
+
+      resultDiv.innerText = suggestion;
+    });
+
+    // Initialize default language
+    updateLanguage("en");
+  </script>
+</body>
+  </html>
