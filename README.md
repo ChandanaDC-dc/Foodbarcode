@@ -1,1 +1,1 @@
-# Foodbarcode
+# AI basic crop suggestion 
